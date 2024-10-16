@@ -414,3 +414,4 @@ Talent.Services.Profile/appsettings.json
 
 #ignore compiled js files
 App/Talent.App.WebApp/wwwroot/js/react/dist/
+/App/Talent.App.WebApp/wwwroot/js/react/dist/homePage.bundle.js
