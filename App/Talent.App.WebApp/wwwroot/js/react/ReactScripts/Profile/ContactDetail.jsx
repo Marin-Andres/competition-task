@@ -186,6 +186,8 @@ export class CompanyDetailSection extends Component {
     }
 
     saveContact() {
+        console.log(this.props.componentId)
+        console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
         this.props.controlFunc(this.props.componentId, data)
         this.closeEdit()
@@ -261,9 +263,9 @@ export class CompanyDetailSection extends Component {
                         <p>Name: {companyName}</p>
                         <p>Email: {email}</p>
                         <p>Phone: {phone}</p>
-                        <p> Location: {location.city}, {location.country}</p>
+                        <p>Location: {location.city}, {location.country}</p>
                     </React.Fragment>
-                    <button type="button" className="ui right floated teal button">Edit</button>
+                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
                 </div>
             </div>
         )
