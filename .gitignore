@@ -411,3 +411,4 @@ Talent.Services.Profile/appsettings.json
 /Talent.Services.Identity/appsettings.json
 /Talent.Services.Profile/appsettings.Development.json
 /Talent.Services.Profile/appsettings.docker.Development.json
+/App/Talent.App.WebApp/wwwroot/js/react/dist/homePage.bundle.js
