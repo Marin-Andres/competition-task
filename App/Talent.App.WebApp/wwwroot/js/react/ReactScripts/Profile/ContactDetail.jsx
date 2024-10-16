@@ -10,6 +10,7 @@ export class IndividualDetailSection extends Component {
             Object.assign({}, props.details)
             : {
                 firstName: "",
+                lastName: "",
                 email: "",
                 phone: ""
             }
@@ -78,6 +79,16 @@ export class IndividualDetailSection extends Component {
                 />
                 <ChildSingleInput
                     inputType="text"
+                    label="Last Name"
+                    name="lastName"
+                    value={this.state.newContact.lastName}
+                    controlFunc={this.handleChange}
+                    maxLength={80}
+                    placeholder="Enter your last name"
+                    errorMessage="Please enter a valid last name"
+                />
+                <ChildSingleInput
+                    inputType="text"
                     label="Email address"
                     name="email"
                     value={this.state.newContact.email}
@@ -107,6 +118,7 @@ export class IndividualDetailSection extends Component {
     renderDisplay() {
 
         let firstName = this.props.details ? `${this.props.details.firstName}` : ""
+        let lastName = this.props.details ? `${this.props.details.lastName}` : ""
         let email = this.props.details ? this.props.details.email : ""
         let phone = this.props.details ? this.props.details.phone : ""
 
@@ -114,7 +126,7 @@ export class IndividualDetailSection extends Component {
             <div className='row'>
                 <div className="ui sixteen wide column">
                     <React.Fragment>
-                        <p>Name: {firstName}</p>
+                        <p>Name: {firstName} {lastName}</p>
                         <p>Email: {email}</p>
                         <p>Phone: {phone}</p>
                     </React.Fragment>
@@ -174,6 +186,8 @@ export class CompanyDetailSection extends Component {
     }
 
     saveContact() {
+        console.log(this.props.componentId)
+        console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
         this.props.controlFunc(this.props.componentId, data)
         this.closeEdit()
@@ -249,9 +263,9 @@ export class CompanyDetailSection extends Component {
                         <p>Name: {companyName}</p>
                         <p>Email: {email}</p>
                         <p>Phone: {phone}</p>
-                        <p> Location: {location.city}, {location.country}</p>
+                        <p>Location: {location.city}, {location.country}</p>
                     </React.Fragment>
-                    <button type="button" className="ui right floated teal button">Edit</button>
+                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
                 </div>
             </div>
         )
