@@ -71,6 +71,8 @@ export class JobDetailsCard extends React.Component {
     }
     render() {
         const { jobDetails } = this.props;
+        console.log("jobDetails");
+        console.log(jobDetails);
         const { jobType } = jobDetails;
         //expires in 14 days by default
         const expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate : moment().add(14, 'days');

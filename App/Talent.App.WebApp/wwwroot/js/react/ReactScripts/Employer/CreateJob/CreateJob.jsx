@@ -12,8 +12,17 @@ import { ChildSingleInput } from '../../Form/SingleInput.jsx'
 import { JobDescription } from './JobDescription.jsx';
 import { JobSummary } from './JobSummary.jsx';
 import { BodyWrapper, loaderData } from '../../Layout/BodyWrapper.jsx';
+import { useParams } from 'react-router-dom';
 
-export default class CreateJob extends React.Component {
+// Custom HOC to provide params to class component
+export function withRouter(Component) {
+    return function (props) {
+        const params = useParams();
+        return <Component {...props} params={params} />;
+    };
+}
+
+class CreateJob extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,8 +71,15 @@ export default class CreateJob extends React.Component {
     loadData() {
         //const root = "" 
         //var param = root.getAttribute('data-id');
-        var param = this.props.match.params.id ? this.props.match.params.id : "";//workaround till we get Redux in to keep the page from breaking
-        var copyJobParam = this.props.match.params.copyId ? this.props.match.params.copyId : "";
+
+        // match is apparently not supported on React Router v6 or later, need to find a workaround 
+        //var param = this.props.match.params.id ? this.props.match.params.id : "";//workaround till we get Redux in to keep the page from breaking
+        //var copyJobParam = this.props.match.params.copyId ? this.props.match.params.copyId : "";
+
+        const { id, copyId } = this.props.params;
+
+        const param = id ? id : "";
+        const copyJobParam = copyId ? copyId : "";
 
         if (param != "" || copyJobParam != "") {
             var link = param != "" ? 'http://localhost:51689/listing/listing/GetJobByToEdit?id=' + param
@@ -206,3 +222,5 @@ export default class CreateJob extends React.Component {
         )
     }
 }
+
+export default withRouter(CreateJob);
