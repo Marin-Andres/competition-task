@@ -73,9 +73,17 @@ export class JobDetailsCard extends React.Component {
         const { jobDetails } = this.props;
         console.log("jobDetails");
         console.log(jobDetails);
-        const { jobType } = jobDetails;
+        const { jobType, startDate, endDate } = jobDetails;
         //expires in 14 days by default
-        const expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate : moment().add(14, 'days');
+        const expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : moment().add(14, 'days').toDate();
+        //starts today by default
+        const start = startDate instanceof moment ? startDate.toDate() : moment().toDate();
+        //ends in 3 months by default
+        const end = endDate instanceof moment ? endDate.toDate() : moment().add(3, 'months').toDate();
+        console.log(" start, end, expiry date")
+        console.log(start);
+        console.log(end);
+        console.log(expiryDate);
         return (
             <div className="ui segment">
                 <div className="content">
@@ -141,18 +149,18 @@ export class JobDetailsCard extends React.Component {
                                         *Start Date:
                                         <br />
                                         <DatePicker
-                                            selected={jobDetails.startDate}
+                                            selected={start}
                                             onChange={(date) => this.handleChangeDate(date, "startDate")}
-                                            minDate={moment()}
+                                            minDate={new Date()}
                                         />
                                     </div>
                                     <div className="summary">
                                         End Date:
                                         <br />
                                         <DatePicker
-                                            selected={jobDetails.endDate}
+                                            selected={end}
                                             onChange={(date) => this.handleChangeDate(date, "endDate")}
-                                            minDate={moment()}
+                                            minDate={new Date()}
                                         />
                                     </div>
                                     <div className="summary">
@@ -161,7 +169,7 @@ export class JobDetailsCard extends React.Component {
                                         <DatePicker
                                             selected={expiryDate}
                                             onChange={(date) => this.handleChangeDate(date, "expiryDate")}
-                                            minDate={moment()}
+                                            minDate={new Date()}
                                         />
                                     </div>
                                 </div>
