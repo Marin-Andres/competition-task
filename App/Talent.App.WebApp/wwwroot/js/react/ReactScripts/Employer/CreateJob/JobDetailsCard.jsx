@@ -53,13 +53,14 @@ export class JobDetailsCard extends React.Component {
     }
 
     handleChangeDate(date, name) {
+        var dateMoment = moment(date);
         if (name == 'expiryDate') {
-            this.props.updateStateData({ target: { name: "expiryDate", value: date } });
+            this.props.updateStateData({ target: { name: "expiryDate", value: dateMoment } });
         }
         else {
             var data = Object.assign({}, this.props.jobDetails);
 
-            data[name] = date;
+            data[name] = dateMoment;
             var updateData = {
                 target: { name: "jobDetails", value: data }
             }
@@ -71,19 +72,13 @@ export class JobDetailsCard extends React.Component {
     }
     render() {
         const { jobDetails } = this.props;
-        console.log("jobDetails");
-        console.log(jobDetails);
         const { jobType, startDate, endDate } = jobDetails;
         //expires in 14 days by default
-        const expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : moment().add(14, 'days').toDate();
+        var expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : moment().add(14, 'days').toDate();
         //starts today by default
-        const start = startDate instanceof moment ? startDate.toDate() : moment().toDate();
+        var start = startDate instanceof moment ? startDate.toDate() : moment().toDate();
         //ends in 3 months by default
-        const end = endDate instanceof moment ? endDate.toDate() : moment().add(3, 'months').toDate();
-        console.log(" start, end, expiry date")
-        console.log(start);
-        console.log(end);
-        console.log(expiryDate);
+        var end = endDate instanceof moment ? endDate.toDate() : moment().add(3, 'months').toDate();
         return (
             <div className="ui segment">
                 <div className="content">
