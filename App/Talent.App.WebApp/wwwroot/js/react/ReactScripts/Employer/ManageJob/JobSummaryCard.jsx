@@ -15,14 +15,22 @@ export class JobSummaryCard extends React.Component {
     }
 
     render() {
+        const { job } = this.props;
+        //console.log("job:", job);
+        const title = job?.title;
+        const locationCity = job?.location?.city;
+        const locationCountry = job?.location?.country;
+        const jobSummary = job?.summary;
+        const noOfSuggestions = (job?.noOfSuggestions > 0) ? job.noOfSuggestions : 0;
+
         return (
             <Card style={{ width: '350px', padding: '10px', height: '400px' }}>
                 <Card.Content>
-                <Card.Header>Test Analyst Master</Card.Header>
-                <Label as='a' color='black' ribbon='right' ><Icon name='user' />0</Label>
-                <Card.Meta>Auckland, New Zealand</Card.Meta>
+                <Card.Header>{title}</Card.Header>
+                <Label as='a' color='black' ribbon='right' ><Icon name='user' />{noOfSuggestions}</Label>
+                <Card.Meta>{locationCity}, {locationCountry}</Card.Meta>
                 <Card.Description>
-                    We have a position for a Test Analyst.
+                    {jobSummary}
                 </Card.Description>
                 </Card.Content>
                 <Card.Content extra>

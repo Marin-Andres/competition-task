@@ -13,7 +13,7 @@ export default class ManageJob extends React.Component {
         let loader = loaderData
         loader.allowedUsers.push("Employer");
         loader.allowedUsers.push("Recruiter");
-        console.log("loader", loader)
+        //console.log("loader", loader)
         this.state = {
             loadJobs: [],
             loaderData: loader,
@@ -30,7 +30,7 @@ export default class ManageJob extends React.Component {
             },
             totalPages: 1,
             activeIndex: "",
-            pageLimit:  6
+            pageLimit:  3
         }
         this.loadData = this.loadData.bind(this);
         this.init = this.init.bind(this);
@@ -42,13 +42,13 @@ export default class ManageJob extends React.Component {
         let loaderData = TalentUtil.deepCopy(this.state.loaderData);
         loaderData.allowedUsers.push("Employer");
         loaderData.allowedUsers.push("Recruiter");
-        loaderData.isLoading = false;
         //this.setState({ loaderData });//comment this
 
         //set loaderData.isLoading to false after getting data
-        this.loadData(() =>
-            this.setState({ loaderData })
-        )
+        this.loadData(() => {
+            loaderData.isLoading = false;
+            this.setState({ loaderData });
+    })
         
         //console.log(this.state.loaderData)
     }
@@ -60,7 +60,6 @@ export default class ManageJob extends React.Component {
     loadData(callback) {
         var link = 'http://localhost:51689/listing/listing/getSortedEmployerJobs';
         var cookies = Cookies.get('talentAuthToken');
-        console.log("cookies", cookies);
        // your ajax call and other logic goes here
        // http://localhost:51689/listing/listing/getSortedEmployerJobs?employerId=670dd32b7652cc0758907f2f&activePage=1&sortbyDate="desc"&showActive=true&showClosed=true&showDraft=true&showExpired=true&showUnexpired=true&limit=6
        $.ajax({
@@ -83,28 +82,46 @@ export default class ManageJob extends React.Component {
             limit: this.state.pageLimit
         },
         success: function(response) {
-            console.log('Jobs data:', response);
-        },
+            let jobsData = null;
+            if (response.myJobs) {
+                jobsData = response.myJobs;
+                //console.log('jobsData', jobsData);
+            }
+            this.setState({loadJobs: jobsData}, () => {
+                if (callback) callback();
+            })
+        }.bind(this),
         error: function (response) {
-            console.error('Error while retrieving jobs: ', response.status);
-            console.log(response);
+            console.error('Error while retrieving jobs: ', response.status);            
         }
        });
-       callback();
     }
 
     loadNewData(data) {
         var loader = this.state.loaderData;
         loader.isLoading = true;
-        data[loaderData] = loader;
+        //update states that affect next loadData (filter, sort, page)
         this.setState(data, () => {
             this.loadData(() => {
                 loader.isLoading = false;
                 this.setState({
-                    loadData: loader
+                    loaderData: loader
                 })
             })
         });
+    }
+
+    renderJobCards() {
+        if (this.state.loadJobs.length === 0 ) {
+            return <p>No Jobs Found</p>;
+        }
+
+        const jobCards = [];
+        for (let i = 0; i < this.state.loadJobs.length; i++) {
+            jobCards.push(<JobSummaryCard job={this.state.loadJobs[i]} />);
+        }
+
+        return <Card.Group>{jobCards}</Card.Group>
     }
 
     render() {
@@ -133,11 +150,7 @@ export default class ManageJob extends React.Component {
                             placeholder='Newest first'
                         />
                     </div>
-                    <Card.Group>
-                        <JobSummaryCard />
-                        <JobSummaryCard />
-                        <JobSummaryCard />
-                    </Card.Group>
+                    {this.renderJobCards()}
                     <div style={{ textAlign: 'center', margin: '30px'}}>
                         <Pagination
                             activePage={this.state.activePage}
