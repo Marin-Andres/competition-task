@@ -5,7 +5,7 @@ import LoggedInBanner from '../../Layout/Banner/LoggedInBanner.jsx';
 import { LoggedInNavigation } from '../../Layout/LoggedInNavigation.jsx';
 import { JobSummaryCard } from './JobSummaryCard.jsx';
 import { BodyWrapper, loaderData } from '../../Layout/BodyWrapper.jsx';
-import { Dropdown, Icon, Card, Container, Pagination } from 'semantic-ui-react';
+import { Checkbox, Dropdown, Icon, Card, Container, Pagination } from 'semantic-ui-react';
 
 export default class ManageJob extends React.Component {
     constructor(props) {
@@ -30,11 +30,13 @@ export default class ManageJob extends React.Component {
             },
             totalPages: 1,
             activeIndex: "",
-            pageLimit:  3
+            pageLimit:  3,
+            selectedFilters: []
         }
         this.loadData = this.loadData.bind(this);
         this.init = this.init.bind(this);
         this.loadNewData = this.loadNewData.bind(this);
+        this.handleSortFilter = this.handleSortFilter.bind(this);
         //your functions go here
     };
 
@@ -98,10 +100,11 @@ export default class ManageJob extends React.Component {
     }
 
     loadNewData(data) {
-        var loader = this.state.loaderData;
+        let loader = this.state.loaderData;
         loader.isLoading = true;
         //update states that affect next loadData (filter, sort, page)
-        this.setState(data, () => {
+        let newData = Object.assign({}, this.state, data);
+        this.setState(newData, () => {
             this.loadData(() => {
                 loader.isLoading = false;
                 this.setState({
@@ -109,6 +112,31 @@ export default class ManageJob extends React.Component {
                 })
             })
         });
+    }
+
+    handleSortFilter(event, evData) {
+        const name = evData.name;
+        const value = evData.value;
+        let stateVar = "";
+        if (name === "date") {
+            stateVar = "sortBy";
+        }
+        else if (name.startsWith("show")) {
+            stateVar = "filter";
+        }
+        else {
+            stateVar = null;
+        }
+        console.log("stateVar", stateVar);
+         
+        if (stateVar) {
+            let stateVarValue = {};
+            stateVarValue[name] = value;
+            let data = {};
+            data[stateVar] = stateVarValue;
+            this.loadNewData(data);
+            console.log("data", data);
+        }
     }
 
     renderJobCards() {
@@ -125,6 +153,18 @@ export default class ManageJob extends React.Component {
     }
 
     render() {
+        const sortByOptions = [
+            { key: 1, text: 'Newest first', value: 'desc' },
+            { key: 2, text: 'Oldest first', value: 'asc' },
+        ];
+        const filterOptions = [
+            { key: 'showActive', text: 'Show Active', value: 'showActive'},
+            { key: 'showClosed', text: 'Show Closed', value: 'showClosed'},
+            { key: 'showDraft', text: 'Show Draft', value: 'showDraft'},
+            { key: 'showExpired', text: 'Show Expired', value: 'showExpired'},
+            { key: 'showUnexpired', text: 'Show Unexpired', value: 'showUnexpired'}
+        ];
+
         return (
             <BodyWrapper reload={this.init} loaderData={this.state.loaderData}>
                 <Container>
@@ -134,7 +174,15 @@ export default class ManageJob extends React.Component {
                         <span>Filter:</span>
                         <Dropdown
                             inline
-                            options={null}
+                            options={filterOptions.map((option) => ({
+                                ...option,
+                                content: (
+                                    <Checkbox
+                                        label={option.text}
+                                        checked={this.state.selectedFilters.includes(option.value)}
+                                    />
+                                )
+                            }))}
                             value={null}
                             onChange={null}
                             placeholder='Choose filter'
@@ -144,9 +192,10 @@ export default class ManageJob extends React.Component {
                         <span>Sort by date:</span>
                         <Dropdown
                             inline
-                            options={null}
+                            name="date"
+                            options={sortByOptions}
                             value={null}
-                            onChange={null}
+                            onChange={this.handleSortFilter}
                             placeholder='Newest first'
                         />
                     </div>

@@ -28,7 +28,7 @@ export class JobSummaryCard extends React.Component {
 
     render() {
         const { job } = this.props;
-        console.log("job:", job);
+        //console.log("job:", job);
         const id = job?.id;
         const title = job?.title;
         const locationCity = job?.location?.city;
