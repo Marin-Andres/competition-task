@@ -118,7 +118,7 @@ export default class ManageJob extends React.Component {
 
         const jobCards = [];
         for (let i = 0; i < this.state.loadJobs.length; i++) {
-            jobCards.push(<JobSummaryCard job={this.state.loadJobs[i]} />);
+            jobCards.push(<JobSummaryCard key={this.state.loadJobs[i].id} job={this.state.loadJobs[i]} />);
         }
 
         return <Card.Group>{jobCards}</Card.Group>
