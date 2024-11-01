@@ -31,7 +31,6 @@ export default class ManageJob extends React.Component {
             totalPages: 1,
             activeIndex: "",
             pageLimit:  3,
-            selectedFilters: []
         }
         this.loadData = this.loadData.bind(this);
         this.init = this.init.bind(this);
@@ -115,28 +114,31 @@ export default class ManageJob extends React.Component {
     }
 
     handleSortFilter(event, evData) {
-        const name = evData.name;
-        const value = evData.value;
+        let name = evData.name;
+        let value = evData.value;
+        console.log("evData", evData);
+        console.log("name, value", name,value);
+
         let stateVar = "";
         if (name === "date") {
             stateVar = "sortBy";
         }
-        else if (name.startsWith("show")) {
+        else{
+            name = value;
             stateVar = "filter";
+            value = this.state.filter[name] ? false : true;
         }
-        else {
-            stateVar = null;
-        }
+
         console.log("stateVar", stateVar);
-         
-        if (stateVar) {
-            let stateVarValue = {};
-            stateVarValue[name] = value;
-            let data = {};
-            data[stateVar] = stateVarValue;
-            this.loadNewData(data);
-            console.log("data", data);
-        }
+        console.log("name, value", name,value);
+        let newVarValue = {};
+        newVarValue[name] = value;
+        console.log("state", this.state);
+        let stateVarValue = Object.assign({}, this.state[stateVar], newVarValue);
+        let data = {};
+        data[stateVar] = stateVarValue;
+        console.log("data", data);
+        this.loadNewData(data);
     }
 
     renderJobCards() {
@@ -154,8 +156,8 @@ export default class ManageJob extends React.Component {
 
     render() {
         const sortByOptions = [
-            { key: 1, text: 'Newest first', value: 'desc' },
-            { key: 2, text: 'Oldest first', value: 'asc' },
+            { key: 'desc', text: 'Newest first', value: 'desc' },
+            { key: 'asc', text: 'Oldest first', value: 'asc' },
         ];
         const filterOptions = [
             { key: 'showActive', text: 'Show Active', value: 'showActive'},
@@ -171,30 +173,29 @@ export default class ManageJob extends React.Component {
                 <h1>List of Jobs</h1>
                     <div style={{marginBottom: '10px'}}>
                         <Icon name='filter' />
-                        <span>Filter:</span>
-                        <Dropdown
-                            inline
-                            options={filterOptions.map((option) => ({
-                                ...option,
-                                content: (
-                                    <Checkbox
-                                        label={option.text}
-                                        checked={this.state.selectedFilters.includes(option.value)}
-                                    />
-                                )
-                            }))}
-                            value={null}
-                            onChange={null}
-                            placeholder='Choose filter'
-                        />
+                        <span>Filter: </span>
+                        <Dropdown item simple text="Choose filter">
+                            <Dropdown.Menu>
+                                {filterOptions.map((option) => (
+                                    <Dropdown.Item key={option.key}>
+                                        <Checkbox
+                                            label={option.text}
+                                            checked={this.state.filter[option.value]}
+                                            onChange={this.handleSortFilter}
+                                            value={option.value}
+                                        />
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Menu>
+                        </Dropdown>
 
                         <Icon name='calendar' />
-                        <span>Sort by date:</span>
+                        <span>Sort by date: </span>
                         <Dropdown
                             inline
                             name="date"
                             options={sortByOptions}
-                            value={null}
+                            value={this.state.sortBy.date}
                             onChange={this.handleSortFilter}
                             placeholder='Newest first'
                         />
