@@ -30,12 +30,13 @@ export default class ManageJob extends React.Component {
             },
             totalPages: 1,
             activeIndex: "",
-            pageLimit:  3,
+            pageSize:  3,
         }
         this.loadData = this.loadData.bind(this);
         this.init = this.init.bind(this);
         this.loadNewData = this.loadNewData.bind(this);
         this.handleSortFilter = this.handleSortFilter.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
         //your functions go here
     };
 
@@ -80,15 +81,17 @@ export default class ManageJob extends React.Component {
             showDraft: this.state.filter.showDraft,
             showExpired: this.state.filter.showExpired,
             showUnexpired: this.state.filter.showUnexpired,
-            limit: this.state.pageLimit
+            limit: this.state.pageSize
         },
         success: function(response) {
             let jobsData = null;
+            //console.log("response",response);
             if (response.myJobs) {
                 jobsData = response.myJobs;
                 //console.log('jobsData', jobsData);
             }
-            this.setState({loadJobs: jobsData}, () => {
+            let pages = Math.ceil(response.totalCount / this.state.pageSize);
+            this.setState({loadJobs: jobsData, totalPages: pages}, () => {
                 if (callback) callback();
             })
         }.bind(this),
@@ -116,8 +119,6 @@ export default class ManageJob extends React.Component {
     handleSortFilter(event, evData) {
         let name = evData.name;
         let value = evData.value;
-        console.log("evData", evData);
-        console.log("name, value", name,value);
 
         let stateVar = "";
         if (name === "date") {
@@ -129,16 +130,20 @@ export default class ManageJob extends React.Component {
             value = this.state.filter[name] ? false : true;
         }
 
-        console.log("stateVar", stateVar);
-        console.log("name, value", name,value);
         let newVarValue = {};
         newVarValue[name] = value;
-        console.log("state", this.state);
         let stateVarValue = Object.assign({}, this.state[stateVar], newVarValue);
         let data = {};
         data[stateVar] = stateVarValue;
-        console.log("data", data);
         this.loadNewData(data);
+    }
+
+    handlePageChange(event, evData) {
+        console.log("evData", evData);
+        let activePage = evData.activePage;
+        this.setState({activePage: activePage}, () => {
+            this.loadNewData();
+        });
     }
 
     renderJobCards() {
@@ -205,7 +210,7 @@ export default class ManageJob extends React.Component {
                         <Pagination
                             activePage={this.state.activePage}
                             totalPages={this.state.totalPages}
-                            onPageChange={null}
+                            onPageChange={this.handlePageChange}
                         />
                     </div>
 
