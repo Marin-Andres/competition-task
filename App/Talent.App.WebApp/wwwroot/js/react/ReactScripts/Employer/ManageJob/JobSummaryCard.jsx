@@ -15,10 +15,9 @@ export class JobSummaryCard extends React.Component {
     }
 
     renderExpired(expirationDate) {
-        const todayDateStr = new Date().toDateString();
-        const expirationDateStr = new Date(expirationDate).toDateString();
+        const todayDate = new Date().toISOString();        
 
-        if (expirationDateStr < todayDateStr) {
+        if (expirationDate < todayDate) {
             return <Button negative size='mini'>Expired</Button>;
         }
         else {
