@@ -27,7 +27,6 @@ export class JobSummaryCard extends React.Component {
 
     render() {
         const { job } = this.props;
-        //console.log("job:", job);
         const id = job?.id;
         const title = job?.title;
         const locationCity = job?.location?.city;
@@ -50,8 +49,16 @@ export class JobSummaryCard extends React.Component {
                         {this.renderExpired(expiryDate)}
                         <ButtonGroup size='mini' basic primary floated='right'>
                             <Button ><Icon name='ban'></Icon>Close</Button>
-                            <Button ><Icon name='edit'></Icon>Edit</Button>
-                            <Button ><Icon name='copy'></Icon>Copy</Button>
+                            <Button 
+                                href={"/EditJob/" + id}
+                            >
+                                <Icon name='edit'></Icon>Edit
+                            </Button>
+                            <Button 
+                                href={"/PostJob/" + id}
+                            >
+                                <Icon name='copy'></Icon>Copy
+                            </Button>
                         </ButtonGroup>
                 </Card.Content>
             </Card>

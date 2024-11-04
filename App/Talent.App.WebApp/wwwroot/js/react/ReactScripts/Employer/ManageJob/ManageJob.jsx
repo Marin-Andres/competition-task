@@ -139,7 +139,7 @@ export default class ManageJob extends React.Component {
     }
 
     handlePageChange(event, evData) {
-        console.log("evData", evData);
+        //console.log("evData", evData);
         let activePage = evData.activePage;
         this.setState({activePage: activePage}, () => {
             this.loadNewData();
