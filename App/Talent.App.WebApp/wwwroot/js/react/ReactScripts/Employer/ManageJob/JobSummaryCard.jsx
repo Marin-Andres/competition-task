@@ -10,8 +10,29 @@ export class JobSummaryCard extends React.Component {
     }
 
     selectJob(id) {
+        //console.log("id", id);
+        var link = 'http://localhost:51689/listing/listing/closeJob';
         var cookies = Cookies.get('talentAuthToken');
         //url: 'http://localhost:51689/listing/listing/closeJob',
+        $.ajax({
+            url: link,
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-type': 'application/json'
+            },
+            type: "POST",
+            data: JSON.stringify(id),
+            success: function (res) {
+                if (res.success == true) {
+                    TalentUtil.notification.show(res.message, "success", null, null);
+                    //window.location = "/ManageJobs";
+                   
+                } else {
+                    TalentUtil.notification.show(res.message, "error", null, null)
+                }
+                
+            }.bind(this)
+        });
     }
 
     renderExpired(expirationDate) {
@@ -48,7 +69,11 @@ export class JobSummaryCard extends React.Component {
                 <Card.Content extra>
                         {this.renderExpired(expiryDate)}
                         <ButtonGroup size='mini' basic primary floated='right'>
-                            <Button ><Icon name='ban'></Icon>Close</Button>
+                            <Button 
+                                onClick={() => {this.selectJob(id);}}
+                            >
+                                <Icon name='ban'></Icon>Close
+                            </Button>
                             <Button 
                                 href={"/EditJob/" + id}
                             >
