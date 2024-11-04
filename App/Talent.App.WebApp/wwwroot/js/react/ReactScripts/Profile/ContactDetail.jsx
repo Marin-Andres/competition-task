@@ -2,6 +2,7 @@
 import Cookies from 'js-cookie';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { Location } from '../Employer/CreateJob/Location.jsx';
+import * as Yup from 'yup';
 export class IndividualDetailSection extends Component {
     constructor(props) {
         super(props)
@@ -19,6 +20,13 @@ export class IndividualDetailSection extends Component {
             showEditSection: false,
             newContact: details
         }
+        const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+        this.schema = Yup.object().shape({
+            firstName: Yup.string().required('First name required'),            
+            lastName: Yup.string().required('Last name required'),
+            email: Yup.string().email('Email is not valid').required('Email required'),
+            phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+        });
 
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)
@@ -51,11 +59,17 @@ export class IndividualDetailSection extends Component {
     }
 
     saveContact() {
-        console.log(this.props.componentId)
-        console.log(this.state.newContact)
-        const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
-        this.closeEdit()
+        try {
+            const data = Object.assign({}, this.state.newContact);
+            const { firstName, lastName, email, phone } = data;
+            const formData = { firstName, lastName, email, phone };
+    
+            const valid = this.schema.validateSync(formData);
+            this.props.controlFunc(this.props.componentId, data);
+            this.closeEdit();
+        } catch(error) {
+            TalentUtil.notification.show(error, "error", null, null);
+        }
     }
 
     render() {
@@ -178,6 +192,7 @@ export class CompanyDetailSection extends Component {
     }
 
     handleChange(event) {
+        console.log("name, value",event.target.name,event.target.value);
         const data = Object.assign({}, this.state.newContact)
         data[event.target.name] = event.target.value
         this.setState({
@@ -186,6 +201,8 @@ export class CompanyDetailSection extends Component {
     }
 
     saveContact() {
+        //console.log(this.props.componentId)
+        //console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
         this.props.controlFunc(this.props.componentId, data)
         this.closeEdit()
