@@ -168,6 +168,13 @@ export class CompanyDetailSection extends Component {
             showEditSection: false,
             newContact: details
         }
+        const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+        this.schema = Yup.object().shape({
+            name: Yup.string().required('Name required'),            
+            email: Yup.string().email('Email is not valid').required('Email required'),
+            phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+        });
+
 
         this.openEdit = this.openEdit.bind(this)
         this.closeEdit = this.closeEdit.bind(this)
@@ -192,7 +199,6 @@ export class CompanyDetailSection extends Component {
     }
 
     handleChange(event) {
-        console.log("name, value",event.target.name,event.target.value);
         const data = Object.assign({}, this.state.newContact)
         data[event.target.name] = event.target.value
         this.setState({
@@ -201,11 +207,17 @@ export class CompanyDetailSection extends Component {
     }
 
     saveContact() {
-        //console.log(this.props.componentId)
-        //console.log(this.state.newContact)
-        const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
-        this.closeEdit()
+        try {
+            const data = Object.assign({}, this.state.newContact);
+            const { name, email, phone } = data;
+            const formData = { name, email, phone };
+    
+            const valid = this.schema.validateSync(formData);
+            this.props.controlFunc(this.props.componentId, data);
+            this.closeEdit();
+        } catch(error) {
+            TalentUtil.notification.show(error, "error", null, null);
+        }
     }
 
     render() {
