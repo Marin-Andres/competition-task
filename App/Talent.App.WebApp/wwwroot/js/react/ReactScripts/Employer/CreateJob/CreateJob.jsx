@@ -84,8 +84,8 @@ class CreateJob extends React.Component {
         this.setState({createUpdateCopyJob: createUpdateCopyJob});
 
         if (param != "" || copyJobParam != "") {
-            var link = param != "" ? 'http://localhost:51689/listing/listing/GetJobByToEdit?id=' + param
-                : 'http://localhost:51689/listing/listing/GetJobForCopy?id=' + copyJobParam;
+            var link = param != "" ? 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/GetJobByToEdit?id=' + param
+                : 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/GetJobForCopy?id=' + copyJobParam;
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: link,
@@ -118,7 +118,7 @@ class CreateJob extends React.Component {
         //console.log("date:", jobData.jobDetails.startDate);
         var cookies = Cookies.get('talentAuthToken');   
         $.ajax({
-            url: 'http://localhost:51689/listing/listing/createUpdateJob',
+            url: 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/createUpdateJob',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
