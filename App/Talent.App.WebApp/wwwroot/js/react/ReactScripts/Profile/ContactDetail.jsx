@@ -192,7 +192,7 @@ export class CompanyDetailSection extends Component {
     }
 
     handleChange(event) {
-        console.log("name, value",event.target.name,event.target.value);
+        //console.log("name, value",event.target.name,event.target.value);
         const data = Object.assign({}, this.state.newContact)
         data[event.target.name] = event.target.value
         this.setState({
