@@ -13,7 +13,6 @@ export default class ManageJob extends React.Component {
         let loader = loaderData
         loader.allowedUsers.push("Employer");
         loader.allowedUsers.push("Recruiter");
-        //console.log("loader", loader)
         this.state = {
             loadJobs: [],
             loaderData: loader,
@@ -50,9 +49,7 @@ export default class ManageJob extends React.Component {
         this.loadData(() => {
             loaderData.isLoading = false;
             this.setState({ loaderData });
-    })
-        
-        //console.log(this.state.loaderData)
+        })
     }
 
     componentDidMount() {
@@ -85,10 +82,8 @@ export default class ManageJob extends React.Component {
         },
         success: function(response) {
             let jobsData = null;
-            //console.log("response",response);
             if (response.myJobs) {
                 jobsData = response.myJobs;
-                //console.log('jobsData', jobsData);
             }
             let pages = Math.ceil(response.totalCount / this.state.pageSize);
             this.setState({loadJobs: jobsData, totalPages: pages}, () => {
@@ -139,7 +134,6 @@ export default class ManageJob extends React.Component {
     }
 
     handlePageChange(event, evData) {
-        console.log("evData", evData);
         let activePage = evData.activePage;
         this.setState({activePage: activePage}, () => {
             this.loadNewData();

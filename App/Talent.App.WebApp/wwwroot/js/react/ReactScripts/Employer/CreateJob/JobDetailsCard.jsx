@@ -53,7 +53,10 @@ export class JobDetailsCard extends React.Component {
     }
 
     handleChangeDate(date, name) {
-        var dateMoment = moment(date);
+        let dateMoment = null;
+        if (date != null) {
+            dateMoment = moment(date);
+        }
         if (name == 'expiryDate') {
             this.props.updateStateData({ target: { name: "expiryDate", value: dateMoment } });
         }
