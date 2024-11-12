@@ -11,9 +11,9 @@ export class JobSummaryCard extends React.Component {
 
     selectJob(id) {
         //console.log("id", id);
-        var link = 'http://localhost:51689/listing/listing/closeJob';
+        var link = 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/closeJob';
         var cookies = Cookies.get('talentAuthToken');
-        //url: 'http://localhost:51689/listing/listing/closeJob',
+        //url: 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/closeJob',
         $.ajax({
             url: link,
             headers: {

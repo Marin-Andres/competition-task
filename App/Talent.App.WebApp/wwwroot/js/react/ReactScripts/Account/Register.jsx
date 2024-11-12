@@ -47,7 +47,7 @@ export default class Register extends React.Component {
         };
 
         $.ajax({
-            url: 'http://localhost:60998/authentication/authentication/signup',
+            url: 'https://talentservicesidentity-eeasf2b6byg2b5ga.australiasoutheast-01.azurewebsites.net/authentication/authentication/signup',
             type: 'POST',
             data: JSON.stringify(registerModel),
             contentType: 'application/json',
