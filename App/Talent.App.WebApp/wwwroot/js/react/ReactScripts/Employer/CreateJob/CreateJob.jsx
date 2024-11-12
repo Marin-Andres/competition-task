@@ -121,6 +121,9 @@ class CreateJob extends React.Component {
                         this.setState({ jobData: res.jobData, createUpdateCopyJob: createUpdateCopyJob })
                     } else {
                         TalentUtil.notification.show(res.message, "error", null, null)
+                        setTimeout(function() {
+                            window.location = "/ManageJobs";
+                        }, 3000);
                     }
                 }.bind(this)
             })
