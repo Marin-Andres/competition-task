@@ -135,7 +135,10 @@ class CreateJob extends React.Component {
                     TalentUtil.notification.show(res.message, "error", null, null)
                 }
                 
-            }.bind(this)
+            }.bind(this),
+            error: function (res) {
+                TalentUtil.notification.show(res.message, "error", null, null)
+            }
         })
     }
 
