@@ -13,6 +13,7 @@ import { JobDescription } from './JobDescription.jsx';
 import { JobSummary } from './JobSummary.jsx';
 import { BodyWrapper, loaderData } from '../../Layout/BodyWrapper.jsx';
 import { useParams } from 'react-router-dom';
+import * as Yup from 'yup';
 
 // Custom HOC to provide params to class component
 export function withRouter(Component) {
@@ -47,10 +48,24 @@ class CreateJob extends React.Component {
             },
             loaderData: loaderData
         }
+
+        this.jobSchema = Yup.object().shape({
+            city: Yup.string().required('Location required'),
+            country: Yup.string().required('Country required'),
+            subCategory: Yup.string().required('Sub category required'),
+            category: Yup.string().required('Category required'),
+            jobTypes: Yup.number().min(1, 'At least one job type is required'),
+            expiryDate: Yup.date().required('Expiry date required'),
+            startDate: Yup.date().required('Start date required'),
+            summary: Yup.string().required('Summary required'),
+            description: Yup.string().required('Description required'),
+            title: Yup.string().required('Title required'),
+        });
         
         this.updateStateData = this.updateStateData.bind(this);
         this.addUpdateJob = this.addUpdateJob.bind(this);
-        this.loadData = this.loadData.bind(this); 
+        this.loadData = this.loadData.bind(this);
+        this.isJobValid = this.isJobValid.bind(this);
    
         this.init = this.init.bind(this);
     };
@@ -109,30 +124,49 @@ class CreateJob extends React.Component {
             })
         }       
     }
+
+    isJobValid(jobData) {
+        const { jobDetails, title, description, summary, expiryDate} = jobData;
+        const { location, startDate, jobType, categories } = jobDetails;
+        const { country, city } = location;
+        const { category, subCategory } = categories;
+        const jobTypes = jobType.length;
+
+        const formData = {title, description, summary, country, city, category, subCategory, jobTypes, startDate, expiryDate, };
+        const validData = this.jobSchema.validateSync(formData);
+        const valid = this.jobSchema.isValidSync(formData);
+
+        return valid;
+    }
+
     addUpdateJob() {
-        var jobData = this.state.jobData;
-        //jobData.jobDetails.startDate = jobData.jobDetails.startDate.toDate();
-        var cookies = Cookies.get('talentAuthToken');   
-        $.ajax({
-            url: 'http://localhost:51689/listing/listing/createUpdateJob',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            dataType:'json',
-            type: "post",
-            data: JSON.stringify(jobData),
-            success: function (res) {
-                if (res.success == true) {
-                    TalentUtil.notification.show(res.message, "success", null, null);
-                    window.location = "/ManageJobs";
-                   
-                } else {
-                    TalentUtil.notification.show(res.message, "error", null, null)
+        try {
+                var jobData = this.state.jobData;
+                if (this.isJobValid(jobData)) {
+                    var cookies = Cookies.get('talentAuthToken');   
+                    $.ajax({
+                        url: 'http://localhost:51689/listing/listing/createUpdateJob',
+                        headers: {
+                            'Authorization': 'Bearer ' + cookies,
+                            'Content-Type': 'application/json'
+                        },
+                        dataType:'json',
+                        type: "post",
+                        data: JSON.stringify(jobData),
+                        success: function (res) {
+                            if (res.success == true) {
+                                TalentUtil.notification.show(res.message, "success", null, null);
+                                window.location = "/ManageJobs";
+                            } else {
+                                TalentUtil.notification.show(res.message, "error", null, null)
+                            }
+                            
+                        }.bind(this)
+                    })
                 }
-                
-            }.bind(this)
-        })
+        } catch(error) {
+            TalentUtil.notification.show(error, "error", null, null);
+        }
     }
 
     updateStateData(event) {

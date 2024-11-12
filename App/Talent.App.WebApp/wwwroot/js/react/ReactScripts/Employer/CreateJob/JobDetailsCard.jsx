@@ -12,12 +12,29 @@ export class JobDetailsCard extends React.Component {
     constructor(props) {
         super(props);
         
+        //starts today by default
+        //ends in 3 months by default
+        //expires in 14 days by default
+        this.state = {
+            startDate: this.props?.jobDetails?.startDate instanceof moment ? this.props.jobDetails.startDate.toDate() : moment().toDate(),
+            endDate: this.props?.jobDetails?.endDate instanceof moment ? this.props.jobDetails.endDate.toDate() : moment().add(3, 'months').toDate(),
+            expiryDate: this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : moment().add(14, 'days').toDate(),
+        };
+
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeDate = this.handleChangeDate.bind(this);
         this.updateJob = this.updateJob.bind(this);
     };
-    componentDidMount() {
-
+    async componentDidMount() {
+        if (!this.props.jobDetails?.startDate) {
+            await this.handleChangeDate(this.state.startDate, "startDate")
+        }
+        if (!this.props.jobDetails?.endDate) {
+            await this.handleChangeDate(this.state.endDate, "endDate")
+        }
+        if (!this.props.expiryDate) {
+            await this.handleChangeDate(this.state.expiryDate, "expiryDate")
+        }
     };
 
     handleChange(event) {
@@ -53,35 +70,33 @@ export class JobDetailsCard extends React.Component {
     }
 
     handleChangeDate(date, name) {
-        let dateMoment = null;
-        if (date != null) {
-            dateMoment = moment(date);
-        }
-        if (name == 'expiryDate') {
-            this.props.updateStateData({ target: { name: "expiryDate", value: dateMoment } });
-        }
-        else {
-            var data = Object.assign({}, this.props.jobDetails);
-
-            data[name] = dateMoment;
-            var updateData = {
-                target: { name: "jobDetails", value: data }
+        return new Promise((resolve) => {
+            let dateMoment = null;
+            if (date != null) {
+                dateMoment = moment(date);
             }
-            this.props.updateStateData(updateData);
-        }        
+            this.setState({ [name]: date}, () => {
+                if (name === 'expiryDate') {
+                    this.props.updateStateData({ target: { name: "expiryDate", value: dateMoment } });
+                }
+                else {
+                    var data = Object.assign({}, this.props.jobDetails);
+                    data[name] = dateMoment;
+                    var updateData = {
+                        target: { name: "jobDetails", value: data }
+                    }
+                    this.props.updateStateData(updateData);
+                }
+                resolve();
+            });
+        });
     }
     updateJob() {
         this.props.createJob();
     }
     render() {
         const { jobDetails } = this.props;
-        const { jobType, startDate, endDate } = jobDetails;
-        //expires in 14 days by default
-        var expiryDate = this.props.expiryDate instanceof moment ? this.props.expiryDate.toDate() : moment().add(14, 'days').toDate();
-        //starts today by default
-        var start = startDate instanceof moment ? startDate.toDate() : moment().toDate();
-        //ends in 3 months by default
-        var end = endDate instanceof moment ? endDate.toDate() : moment().add(3, 'months').toDate();
+        const { jobType } = jobDetails;
         return (
             <div className="ui segment">
                 <div className="content">
@@ -147,7 +162,7 @@ export class JobDetailsCard extends React.Component {
                                         *Start Date:
                                         <br />
                                         <DatePicker
-                                            selected={start}
+                                            selected={this.state.startDate}
                                             onChange={(date) => this.handleChangeDate(date, "startDate")}
                                             minDate={new Date()}
                                         />
@@ -156,7 +171,7 @@ export class JobDetailsCard extends React.Component {
                                         End Date:
                                         <br />
                                         <DatePicker
-                                            selected={end}
+                                            selected={this.state.endDate}
                                             onChange={(date) => this.handleChangeDate(date, "endDate")}
                                             minDate={new Date()}
                                         />
@@ -165,7 +180,7 @@ export class JobDetailsCard extends React.Component {
                                         *Expiry Date:
                                         <br />
                                         <DatePicker
-                                            selected={expiryDate}
+                                            selected={this.state.expiryDate}
                                             onChange={(date) => this.handleChangeDate(date, "expiryDate")}
                                             minDate={new Date()}
                                         />
