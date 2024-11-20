@@ -20,12 +20,11 @@ export class IndividualDetailSection extends Component {
             showEditSection: false,
             newContact: details
         }
-        const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
         this.schema = Yup.object().shape({
             firstName: Yup.string().required('First name required'),            
             lastName: Yup.string().required('Last name required'),
             email: Yup.string().email('Email is not valid').required('Email required'),
-            phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+            phone: Yup.string().matches(TalentUtil.phoneRegExp(), 'Phone number is not valid'),
         });
 
         this.openEdit = this.openEdit.bind(this)
@@ -168,11 +167,10 @@ export class CompanyDetailSection extends Component {
             showEditSection: false,
             newContact: details
         }
-        const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
         this.schema = Yup.object().shape({
             name: Yup.string().required('Name required'),            
             email: Yup.string().email('Email is not valid').required('Email required'),
-            phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+            phone: Yup.string().matches(TalentUtil.phoneRegExp(), 'Phone number is not valid'),
         });
 
 
@@ -199,6 +197,7 @@ export class CompanyDetailSection extends Component {
     }
 
     handleChange(event) {
+        //console.log("name, value",event.target.name,event.target.value);
         const data = Object.assign({}, this.state.newContact)
         data[event.target.name] = event.target.value
         this.setState({
