@@ -10,8 +10,33 @@ export class JobSummaryCard extends React.Component {
     }
 
     selectJob(id) {
+        //console.log("id", id);
+        var link = 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/closeJob';
         var cookies = Cookies.get('talentAuthToken');
-        //url: 'http://localhost:51689/listing/listing/closeJob',
+        //url: 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/closeJob',
+        $.ajax({
+            url: link,
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-type': 'application/json'
+            },
+            type: "POST",
+            data: JSON.stringify(id),
+            success: function (res) {
+                if (res.success == true) {
+                    TalentUtil.notification.show(res.message, "success", null, null);
+                    //window.location = "/ManageJobs";
+                   
+                } else {
+                    TalentUtil.notification.show(res.message, "error", null, null)
+                }
+                
+            }.bind(this),
+            error: function (res) {
+                TalentUtil.notification.show(res.message, "error", null, null);
+            }
+
+        });
     }
 
     renderExpired(expirationDate) {
@@ -27,7 +52,6 @@ export class JobSummaryCard extends React.Component {
 
     render() {
         const { job } = this.props;
-        //console.log("job:", job);
         const id = job?.id;
         const title = job?.title;
         const locationCity = job?.location?.city;
@@ -49,9 +73,21 @@ export class JobSummaryCard extends React.Component {
                 <Card.Content extra>
                         {this.renderExpired(expiryDate)}
                         <ButtonGroup size='mini' basic primary floated='right'>
-                            <Button ><Icon name='ban'></Icon>Close</Button>
-                            <Button ><Icon name='edit'></Icon>Edit</Button>
-                            <Button ><Icon name='copy'></Icon>Copy</Button>
+                            <Button 
+                                onClick={() => {this.selectJob(id);}}
+                            >
+                                <Icon name='ban'></Icon>Close
+                            </Button>
+                            <Button 
+                                href={"/EditJob/" + id}
+                            >
+                                <Icon name='edit'></Icon>Edit
+                            </Button>
+                            <Button 
+                                href={"/PostJob/" + id}
+                            >
+                                <Icon name='copy'></Icon>Copy
+                            </Button>
                         </ButtonGroup>
                 </Card.Content>
             </Card>

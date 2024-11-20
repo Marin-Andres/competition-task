@@ -57,10 +57,10 @@ export default class ManageJob extends React.Component {
     };
 
     loadData(callback) {
-        var link = 'http://localhost:51689/listing/listing/getSortedEmployerJobs';
+        var link = 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/getSortedEmployerJobs';
         var cookies = Cookies.get('talentAuthToken');
        // your ajax call and other logic goes here
-       // http://localhost:51689/listing/listing/getSortedEmployerJobs?employerId=670dd32b7652cc0758907f2f&activePage=1&sortbyDate="desc"&showActive=true&showClosed=true&showDraft=true&showExpired=true&showUnexpired=true&limit=6
+       // https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/getSortedEmployerJobs?employerId=670dd32b7652cc0758907f2f&activePage=1&sortbyDate="desc"&showActive=true&showClosed=true&showDraft=true&showExpired=true&showUnexpired=true&limit=6
        $.ajax({
         url: link,
         headers: {

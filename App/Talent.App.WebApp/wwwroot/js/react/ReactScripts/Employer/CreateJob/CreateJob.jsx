@@ -46,7 +46,8 @@ class CreateJob extends React.Component {
                     location: { country: "", city: ""}
                 }
             },
-            loaderData: loaderData
+            loaderData: loaderData,
+            createUpdateCopyJob: "Create"
         }
 
         this.jobSchema = Yup.object().shape({
@@ -92,13 +93,14 @@ class CreateJob extends React.Component {
         //var copyJobParam = this.props.match.params.copyId ? this.props.match.params.copyId : "";
 
         const { id, copyId } = this.props.params;
-
         const param = id ? id : "";
         const copyJobParam = copyId ? copyId : "";
+        const createUpdateCopyJob = id ? "Update" : copyId ? "Copy" : "Create";
+        this.setState({createUpdateCopyJob: createUpdateCopyJob});
 
         if (param != "" || copyJobParam != "") {
-            var link = param != "" ? 'http://localhost:51689/listing/listing/GetJobByToEdit?id=' + param
-                : 'http://localhost:51689/listing/listing/GetJobForCopy?id=' + copyJobParam;
+            var link = param != "" ? 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/GetJobByToEdit?id=' + param
+                : 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/GetJobForCopy?id=' + copyJobParam;
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: link,
@@ -116,9 +118,12 @@ class CreateJob extends React.Component {
                         res.jobData.expiryDate = res.jobData.expiryDate
                             ? moment(res.jobData.expiryDate) > moment()
                                 ? moment(res.jobData.expiryDate) : moment().add(14,'days') : null;
-                        this.setState({ jobData: res.jobData })
+                        this.setState({ jobData: res.jobData, createUpdateCopyJob: createUpdateCopyJob })
                     } else {
                         TalentUtil.notification.show(res.message, "error", null, null)
+                        setTimeout(function() {
+                            window.location = "/ManageJobs";
+                        }, 3000);
                     }
                 }.bind(this)
             })
@@ -145,7 +150,7 @@ class CreateJob extends React.Component {
                 if (this.isJobValid(jobData)) {
                     var cookies = Cookies.get('talentAuthToken');   
                     $.ajax({
-                        url: 'http://localhost:51689/listing/listing/createUpdateJob',
+                        url: 'https://talentserviceslisting-e0feeyhhdfgvche0.australiasoutheast-01.azurewebsites.net/listing/listing/createUpdateJob',
                         headers: {
                             'Authorization': 'Bearer ' + cookies,
                             'Content-Type': 'application/json'
@@ -185,7 +190,7 @@ class CreateJob extends React.Component {
                         <div className="ui grid">
                             <div className="row">
                                 <div className="sixteen wide center aligned padded column">
-                                    <h1>Create Job</h1>
+                                    <h1>{this.state.createUpdateCopyJob + " Job"}</h1>
                                 </div>
                             </div>
 
